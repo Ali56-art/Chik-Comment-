@@ -1,4 +1,12 @@
-* {
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chick Command - 100 Seviye Macerası</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
             box-sizing: border-box;
             user-select: none;
             margin: 0;
@@ -17,3 +25,687 @@
             align-items: center;
             color: #4a4a4a;
         }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(255, 105, 180, 0.2);
+            border: 4px solid #fff;
+            text-align: center;
+            max-width: 95%;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: flex; flex-direction: column; align-items: center; }
+
+        #login-screen { width: 400px; }
+        .title-badge {
+            background: #ff7675;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 18px;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 14px 18px;
+            margin: 10px 0;
+            border: 3px solid #ffeaa7;
+            border-radius: 15px;
+            font-size: 16px;
+            outline: none;
+            background: #fffdf0;
+        }
+        input:focus { border-color: #fdcb6e; }
+
+        .btn {
+            background: #00b894;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #00886d;
+            transition: 0.1s;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #00886d; }
+        .btn-orange { background: #e17055; box-shadow: 0 5px 0 #d35400; }
+        .btn-purple { background: #a29bfe; box-shadow: 0 5px 0 #6c5ce7; }
+        .btn-lobby { background: #fdcb6e; box-shadow: 0 5px 0 #e1b12c; font-size: 14px; padding: 8px 14px; margin: 0; width: auto; }
+        .btn-lang { background: #0984e3; box-shadow: 0 5px 0 #074b83; margin-top: 5px; }
+
+        .lang-container {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 15px 0;
+            width: 100%;
+        }
+        .lang-btn {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid #b2bec3;
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .lang-btn.active-lang {
+            background: #ffeaa7;
+            border-color: #fdcb6e;
+        }
+
+        .loader-bar {
+            width: 280px;
+            height: 22px;
+            background: #ffeaa7;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 15px auto;
+        }
+        .loader-fill {
+            height: 100%;
+            width: 0%;
+            background: #fdcb6e;
+            transition: width 0.3s;
+        }
+
+        #game-screen { width: 920px; max-width: 95vw; }
+        .header-banner {
+            background: #fd79a8;
+            color: white;
+            padding: 14px 22px;
+            border-radius: 18px;
+            font-size: 18px;
+            margin-bottom: 15px;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-layout {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .board-container {
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 320px;
+        }
+        .grid {
+            display: grid;
+            gap: 8px;
+            padding: 14px;
+            border-radius: 16px;
+        }
+        .cell {
+            width: 58px;
+            height: 58px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.08);
+            transition: 0.2s;
+        }
+
+        .theme-grass { background: #c8e6c9; border: 4px solid #81c784; }
+        .theme-grass .grid { background: #a5d6a7; }
+        .theme-grass .cell { background: #e8f5e9; }
+
+        .theme-desert { background: #ffe0b2; border: 4px solid #ffb74d; }
+        .theme-desert .grid { background: #ffcc80; }
+        .theme-desert .cell { background: #fff3e0; }
+
+        .theme-space { background: #37474f; border: 4px solid #78909c; color: white; }
+        .theme-space .grid { background: #263238; }
+        .theme-space .cell { background: #455a64; color: white; }
+
+        .panel {
+            flex: 1;
+            min-width: 300px;
+            background: #f1f2f6;
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .cmd-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn-cmd {
+            background: #74b9ff;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #0984e3;
+            font-weight: bold;
+        }
+        .cmd-list {
+            background: white;
+            min-height: 140px;
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-content: flex-start;
+            border: 2px dashed #b2bec3;
+        }
+        .cmd-badge {
+            background: #ffeaa7;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        #cert-wrapper {
+            background: #fff;
+            border: 12px solid #fdcb6e;
+            border-radius: 20px;
+            padding: 40px;
+            width: 650px;
+            max-width: 100%;
+            box-shadow: 0 0 30px rgba(0,0,0,0.15);
+            position: relative;
+            background-image: radial-gradient(#ffeaa7 10%, transparent 11%);
+            background-size: 20px 20px;
+        }
+        .cert-header { font-size: 32px; color: #d63031; font-weight: bold; }
+        .cert-name { font-size: 36px; color: #6c5ce7; margin: 15px 0; border-bottom: 3px dashed #6c5ce7; display: inline-block; padding: 0 20px; }
+        .cert-body { font-size: 18px; color: #2d3436; line-height: 1.6; }
+        .cert-badge { font-size: 60px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" class="card screen active">
+        <span class="title-badge" id="lang-title">🐤 Chick Command</span>
+        <h2 id="lang-welcome">Lobiye Hoş Geldin!</h2>
+        
+        <div class="lang-container">
+            <button class="lang-btn active-lang" onclick="setLang('tr')">Türkçe</button>
+            <button class="lang-btn" onclick="setLang('en')">English</button>
+            <button class="lang-btn" onclick="setLang('de')">Deutsch</button>
+        </div>
+
+        <input type="text" id="username" placeholder="Kullanıcı adını yaz...">
+        
+        <button class="btn" onclick="playClickSound(); startLobbyAction('play')" id="lang-btn-play">Oyuna Başla</button>
+        <button class="btn btn-lang" onclick="playClickSound(); startLobbyAction('code')" id="lang-btn-code">Kodlamaya Başla</button>
+    </div>
+
+    <div id="game-screen" class="card screen">
+        <div class="header-banner">
+            <span id="lang-banner">Lütfen civcivi oradaki komuta göre komutlandırınız! 🐥</span>
+            <button class="btn btn-lobby" onclick="playClickSound(); goToLobby()" id="lang-btn-lobby">🏠 Lobiye Dön</button>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; width:100%; margin-bottom:12px; font-weight:bold; font-size:16px;">
+            <span id="level-indicator">Seviye: 1 / 100</span>
+            <span id="theme-indicator">Tema: Yeşil Çayır 🌿</span>
+            <span id="player-tag">Oyuncu: -</span>
+        </div>
+
+        <div class="game-layout">
+            <div class="board-container theme-grass" id="board-box">
+                <div id="grid" class="grid"></div>
+            </div>
+
+            <div class="panel">
+                <h3 id="lang-cmd-panel">Komut Paneli</h3>
+                <div class="cmd-buttons">
+                    <button class="btn-cmd" onclick="playClickSound(); addCmd('İleri')" id="btn-forward">⬆️ İleri</button>
+                    <button class="btn-cmd" onclick="playClickSound(); addCmd('Sağa Dön')" id="btn-right">↪️ Sağa Dön</button>
+                    <button class="btn-cmd" onclick="playClickSound(); addCmd('Sola Dön')" id="btn-left">↩️ Sola Dön</button>
+                </div>
+
+                <h4 id="lang-cmd-chain">Komut Zinciri:</h4>
+                <div class="cmd-list" id="cmd-list"></div>
+
+                <div style="display:flex; gap:10px; margin-top:auto;">
+                    <button class="btn btn-orange" onclick="playClickSound(); popCmd()" style="flex:1;" id="lang-btn-undo">⬅️ Geri Al</button>
+                    <button class="btn" onclick="playClickSound(); runCode()" style="flex:2;" id="lang-btn-run">▶️ Çalıştır</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cert-screen" class="screen">
+        <div id="cert-wrapper">
+            <div class="cert-header" id="lang-cert-title">BAŞARI SERTİFİKASI</div>
+            <p style="margin-top:5px; color:#636e72;">Chick Command 100 Seviye Serüveni</p>
+            <div class="cert-badge">🏆🐤🚀</div>
+            <p id="lang-cert-desc1">Bu sertifika gururla sunulur:</p>
+            <div class="cert-name" id="cert-user-name">Oyuncu Adı</div>
+            <div class="cert-body" id="lang-cert-desc2">
+                Tüm engelleri aşarak, rokete binip uzaya ulaştı ve <b>100 Seviyelik</b> Chick Command bulmacalarının tamamını başarıyla çözdü!
+            </div>
+            <p style="margin-top: 30px; font-size: 14px; color: #b2bec3;" id="cert-date"></p>
+        </div>
+        <div style="margin-top:20px; display:flex; gap:15px; flex-wrap:wrap; justify-content:center;">
+            <button class="btn btn-purple" onclick="playClickSound(); downloadCert()" style="width:auto;" id="lang-cert-dl">📜 Sertifikayı İndir (PNG)</button>
+            <button class="btn btn-lobby" onclick="playClickSound(); goToLobby()" id="lang-cert-lobby">🏠 Lobiye Dön</button>
+        </div>
+    </div>
+
+    <script>
+        let audioCtx = null;
+        let lobbyMusicInterval = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playClickSound() {
+            try {
+                initAudio();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch(e) {}
+        }
+
+        function playWinSound() {
+            try {
+                initAudio();
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, index) => {
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.15);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime + index * 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + index * 0.15 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + index * 0.15);
+                    osc.stop(audioCtx.currentTime + index * 0.15 + 0.3);
+                });
+            } catch(e) {}
+        }
+
+        function playLoseSound() {
+            try {
+                initAudio();
+                const notes = [350, 300, 250];
+                notes.forEach((freq, index) => {
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.18);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime + index * 0.18);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + index * 0.18 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + index * 0.18);
+                    osc.stop(audioCtx.currentTime + index * 0.18 + 0.25);
+                });
+            } catch(e) {}
+        }
+
+        function startLobbyMusic() {
+            if(lobbyMusicInterval) return;
+            const melody = [440, 493.88, 523.25, 587.33, 523.25, 493.88];
+            let step = 0;
+            lobbyMusicInterval = setInterval(() => {
+                try {
+                    initAudio();
+                    if(document.getElementById('login-screen').classList.contains('active')) {
+                        let osc = audioCtx.createOscillator();
+                        let gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(melody[step], audioCtx.currentTime);
+                        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.25);
+                    }
+                    step = (step + 1) % melody.length;
+                } catch(e) {}
+            }, 300);
+        }
+
+        window.addEventListener('click', () => { startLobbyMusic(); }, {once: true});
+
+        let currentLang = 'tr';
+        const translations = {
+            tr: {
+                title: "🐤 Civciv Komutu",
+                welcome: "Lobiye Hoş Geldin!",
+                placeholder: "Kullanıcı adını yaz...",
+                playBtn: "Oyuna Başla",
+                codeBtn: "Kodlamaya Başla",
+                banner: "Lütfen civcivi oradaki komuta göre komutlandırınız! 🐥",
+                lobbyBtn: "🏠 Lobiye Dön",
+                level: "Seviye",
+                themeGrass: "Tema: Yeşil Çayır 🌿",
+                themeDesert: "Tema: Çöl Macerası 🏜️",
+                themeSpace: "Tema: Uzay Üssü 🚀",
+                player: "Oyuncu",
+                cmdPanel: "Komut Paneli",
+                forward: "⬆️ İleri",
+                right: "↪️ Sağa Dön",
+                left: "↩️ Sola Dön",
+                cmdChain: "Komut Zinciri:",
+                undo: "⬅️ Geri Al",
+                run: "▶️ Çalıştır",
+                certTitle: "BAŞARI SERTİFİKASI",
+                certDesc1: "Bu sertifika gururla sunulur:",
+                certDesc2: "Tüm engelleri aşarak, rokete binip uzaya ulaştı ve <b>100 Seviyelik</b> Chick Command bulmacalarının tamamını başarıyla çözdü!",
+                certDl: "📜 Sertifikayı İndir (PNG)",
+                alertName: "Lütfen bir isim gir!",
+                alertHit: "Eyvah! Engele çarptın, tekrar dene.",
+                alertWin: "Harika! Seviye Tamamlandı! 🎉",
+                alertLose: "Tüh, hedefe ulaşamadın. Komutları kontrol et!"
+            },
+            en: {
+                title: "🐤 Chick Command",
+                welcome: "Welcome to Lobby!",
+                placeholder: "Enter your username...",
+                playBtn: "Start Game",
+                codeBtn: "Start Coding",
+                banner: "Please command the chick according to the grid! 🐥",
+                lobbyBtn: "🏠 Back to Lobby",
+                level: "Level",
+                themeGrass: "Theme: Green Meadow 🌿",
+                themeDesert: "Theme: Desert Adventure 🏜️",
+                themeSpace: "Theme: Space Base 🚀",
+                player: "Player",
+                cmdPanel: "Command Panel",
+                forward: "⬆️ Forward",
+                right: "↪️ Turn Right",
+                left: "↩️ Turn Left",
+                cmdChain: "Command Chain:",
+                undo: "⬅️ Undo",
+                run: "▶️ Run",
+                certTitle: "CERTIFICATE OF SUCCESS",
+                certDesc1: "This certificate is proudly presented to:",
+                certDesc2: "Overcoming all obstacles, reached space by rocket and successfully solved all <b>100 levels</b> of Chick Command!",
+                certDl: "📜 Download Certificate (PNG)",
+                alertName: "Please enter a name!",
+                alertHit: "Oh no! You hit an obstacle, try again.",
+                alertWin: "Great! Level Completed! 🎉",
+                alertLose: "Oops, you didn't reach the target. Check commands!"
+            },
+            de: {
+                title: "🐤 Küken Befehl",
+                welcome: "Willkommen in der Lobby!",
+                placeholder: "Gib deinen Benutzernamen ein...",
+                playBtn: "Spiel Starten",
+                codeBtn: "Programmieren Starten",
+                banner: "Bitte steuere das Küken gemäß den Anweisungen! 🐥",
+                lobbyBtn: "🏠 Zurück zur Lobby",
+                level: "Level",
+                themeGrass: "Thema: Grüne Wiese 🌿",
+                themeDesert: "Thema: Wüstenabenteuer 🏜️",
+                themeSpace: "Thema: Raumbasis 🚀",
+                player: "Spieler",
+                cmdPanel: "Befehlspanel",
+                forward: "⬆️ Vorwärts",
+                right: "↪️ Rechts abbiegen",
+                left: "↩️ Links abbiegen",
+                cmdChain: "Befehlskette:",
+                undo: "⬅️ Rückgängig",
+                run: "▶️ Ausführen",
+                certTitle: "ERFOLGSZERTIFIKAT",
+                certDesc1: "Dieses Zertifikat wird stolz verliehen an:",
+                certDesc2: "Hat alle Hindernisse überwunden, erreichte das All mit einer Rakete und löste erfolgreich alle <b>100 Level</b>!",
+                certDl: "📜 Zertifikat Herunterladen (PNG)",
+                alertName: "Bitte gib einen Namen ein!",
+                alertHit: "Oh nein! Du hast ein Hindernis getroffen.",
+                alertWin: "Großartig! Level Abgeschlossen! 🎉",
+                alertLose: "Schade, du hast das Ziel nicht erreicht."
+            }
+        };
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active-lang'));
+            event.target.classList.add('active-lang');
+
+            const t = translations[lang];
+            document.getElementById('lang-title').innerText = t.title;
+            document.getElementById('lang-welcome').innerText = t.welcome;
+            document.getElementById('username').placeholder = t.placeholder;
+            document.getElementById('lang-btn-play').innerText = t.playBtn;
+            document.getElementById('lang-btn-code').innerText = t.codeBtn;
+            document.getElementById('lang-banner').innerText = t.banner;
+            document.getElementById('lang-btn-lobby').innerText = t.lobbyBtn;
+            document.getElementById('lang-cmd-panel').innerText = t.cmdPanel;
+            document.getElementById('btn-forward').innerText = t.forward;
+            document.getElementById('btn-right').innerText = t.right;
+            document.getElementById('btn-left').innerText = t.left;
+            document.getElementById('lang-cmd-chain').innerText = t.cmdChain;
+            document.getElementById('lang-btn-undo').innerText = t.undo;
+            document.getElementById('lang-btn-run').innerText = t.run;
+            document.getElementById('lang-cert-title').innerText = t.certTitle;
+            document.getElementById('lang-cert-desc1').innerText = t.certDesc1;
+            document.getElementById('lang-cert-desc2').innerHTML = t.certDesc2;
+            document.getElementById('lang-cert-dl').innerText = t.certDl;
+            document.getElementById('lang-cert-lobby').innerText = t.lobbyBtn;
+
+            if(document.getElementById('game-screen').classList.contains('active')) {
+                updateLevelUI();
+            }
+        }
+
+        let player = { name: '' };
+        let currentLevel = 1;
+        let gridSize = 4;
+        let chick = { x: 0, y: 0, dir: 0 }; 
+        let target = { x: 3, y: 3 };
+        let obstacles = [];
+        let commands = [];
+        let isSpace = false;
+
+        const dirIcons = ['🐤', '🐥', '🐥', '🐤'];
+
+        function startLobbyAction(action) {
+            const name = document.getElementById('username').value.trim();
+            if(!name) return alert(translations[currentLang].alertName);
+            player.name = name;
+            startGame();
+        }
+
+        function startGame() {
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('cert-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            document.getElementById('player-tag').innerText = `${translations[currentLang].player}: ${player.name}`;
+            loadLevel(currentLevel);
+        }
+
+        function goToLobby() {
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('cert-screen').classList.remove('active');
+            document.getElementById('login-screen').classList.add('active');
+            currentLevel = 1;
+        }
+
+        function updateLevelUI() {
+            const t = translations[currentLang];
+            document.getElementById('level-indicator').innerText = `${t.level}: ${currentLevel} / 100`;
+            document.getElementById('player-tag').innerText = `${t.player}: ${player.name}`;
+            
+            const themeText = document.getElementById('theme-indicator');
+            if(currentLevel < 30) themeText.innerText = t.themeGrass;
+            else if(currentLevel < 70) themeText.innerText = t.themeDesert;
+            else themeText.innerText = t.themeSpace;
+        }
+
+        function loadLevel(lvl) {
+            commands = [];
+            updateCmdUI();
+            updateLevelUI();
+
+            gridSize = lvl > 50 ? 6 : (lvl > 20 ? 5 : 4);
+            isSpace = lvl >= 70;
+
+            const boardBox = document.getElementById('board-box');
+            if(lvl < 30) boardBox.className = "board-container theme-grass";
+            else if(lvl < 70) boardBox.className = "board-container theme-desert";
+            else boardBox.className = "board-container theme-space";
+
+            chick = { x: 0, y: 0, dir: 0 };
+            target = { x: gridSize - 1, y: gridSize - 1 };
+            
+            obstacles = [];
+            let obsCount = Math.min(Math.floor(lvl / 8), gridSize);
+            for(let i=0; i<obsCount; i++) {
+                let ox = Math.floor(Math.random() * (gridSize - 1));
+                let oy = Math.floor(Math.random() * gridSize);
+                if((ox!==0||oy!==0) && (ox!==target.x||oy!==target.y)) {
+                    obstacles.push({x: ox, y: oy});
+                }
+            }
+
+            renderBoard();
+        }
+
+        function renderBoard() {
+            const grid = document.getElementById('grid');
+            grid.style.gridTemplateColumns = `repeat(${gridSize}, 58px)`;
+            grid.innerHTML = '';
+
+            for(let r=0; r<gridSize; r++) {
+                for(let c=0; c<gridSize; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+
+                    if(chick.x === c && chick.y === r) {
+                        cell.innerText = isSpace ? '🚀' : dirIcons[chick.dir];
+                    } else if(target.x === c && target.y === r) {
+                        cell.innerText = isSpace ? '🪐' : '🌽';
+                    } else if(obstacles.some(o => o.x === c && o.y === r)) {
+                        cell.innerText = isSpace ? '☄️' : '🌧️';
+                    }
+
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function addCmd(cmdType) {
+            commands.push(cmdType);
+            updateCmdUI();
+        }
+
+        function popCmd() {
+            commands.pop();
+            updateCmdUI();
+        }
+
+        function updateCmdUI() {
+            const list = document.getElementById('cmd-list');
+            list.innerHTML = '';
+            const t = translations[currentLang];
+            commands.forEach((c) => {
+                const badge = document.createElement('div');
+                badge.className = 'cmd-badge';
+                if(c === 'İleri') badge.innerText = t.forward;
+                else if(c === 'Sağa Dön') badge.innerText = t.right;
+                else if(c === 'Sola Dön') badge.innerText = t.left;
+                list.appendChild(badge);
+            });
+        }
+
+        async function runCode() {
+            const t = translations[currentLang];
+            for(let cmd of commands) {
+                if(cmd === 'İleri') {
+                    if(chick.dir === 0 && chick.x < gridSize-1) chick.x++;
+                    else if(chick.dir === 1 && chick.y < gridSize-1) chick.y++;
+                    else if(chick.dir === 2 && chick.x > 0) chick.x--;
+                    else if(chick.dir === 3 && chick.y > 0) chick.y--;
+                } else if(cmd === 'Sağa Dön') {
+                    chick.dir = (chick.dir + 1) % 4;
+                } else if(cmd === 'Sola Dön') {
+                    chick.dir = (chick.dir + 3) % 4;
+                }
+                
+                renderBoard();
+                await new Promise(r => setTimeout(r, 400));
+
+                if(obstacles.some(o => o.x === chick.x && o.y === chick.y)) {
+                    playLoseSound();
+                    alert(t.alertHit);
+                    loadLevel(currentLevel);
+                    return;
+                }
+            }
+
+            if(chick.x === target.x && chick.y === target.y) {
+                playWinSound();
+                if(currentLevel === 100) {
+                    showCertificate();
+                } else {
+                    alert(t.alertWin);
+                    currentLevel++;
+                    loadLevel(currentLevel);
+                }
+            } else {
+                playLoseSound();
+                alert(t.alertLose);
+                loadLevel(currentLevel);
+            }
+        }
+
+        function showCertificate() {
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('cert-screen').classList.add('active');
+            document.getElementById('cert-user-name').innerText = player.name;
+            const today = new Date();
+            document.getElementById('cert-date').innerText = "Tarih / Date: " + today.toLocaleDateString();
+        }
+
+        function downloadCert() {
+            html2canvas(document.getElementById('cert-wrapper')).then(canvas => {
+                let link = document.createElement('a');
+                link.download = `${player.name}_Chick_Command_Sertifikasi.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
