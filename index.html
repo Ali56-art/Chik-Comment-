@@ -50,7 +50,7 @@
             margin-bottom: 12px;
             font-weight: bold;
         }
-        input[type="text"], input[type="email"] {
+        input[type="text"] {
             width: 100%;
             padding: 14px 18px;
             margin: 10px 0;
@@ -104,21 +104,6 @@
             border-color: #fdcb6e;
         }
 
-        .loader-bar {
-            width: 280px;
-            height: 22px;
-            background: #ffeaa7;
-            border-radius: 12px;
-            overflow: hidden;
-            margin: 15px auto;
-        }
-        .loader-fill {
-            height: 100%;
-            width: 0%;
-            background: #fdcb6e;
-            transition: width 0.3s;
-        }
-
         #game-screen { width: 920px; max-width: 95vw; }
         .header-banner {
             background: #fd79a8;
@@ -157,13 +142,13 @@
             border-radius: 16px;
         }
         .cell {
-            width: 58px;
-            height: 58px;
+            width: 54px;
+            height: 54px;
             border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 30px;
+            font-size: 26px;
             box-shadow: inset 0 0 5px rgba(0,0,0,0.08);
             transition: 0.2s;
         }
@@ -202,7 +187,7 @@
             border: none;
             padding: 10px 14px;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
             box-shadow: 0 4px 0 #0984e3;
             font-weight: bold;
@@ -222,7 +207,7 @@
             background: #ffeaa7;
             padding: 6px 12px;
             border-radius: 10px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
         }
 
@@ -247,7 +232,7 @@
 <body>
 
     <div id="login-screen" class="card screen active">
-        <span class="title-badge" id="lang-title">🐤 Chick Command</span>
+        <span class="title-badge" id="lang-title">🐤 Civciv Komutu</span>
         <h2 id="lang-welcome">Lobiye Hoş Geldin!</h2>
         
         <div class="lang-container">
@@ -258,8 +243,7 @@
 
         <input type="text" id="username" placeholder="Kullanıcı adını yaz...">
         
-        <button class="btn" onclick="playClickSound(); startLobbyAction('play')" id="lang-btn-play">Oyuna Başla</button>
-        <button class="btn btn-lang" onclick="playClickSound(); startLobbyAction('code')" id="lang-btn-code">Kodlamaya Başla</button>
+        <button class="btn" onclick="playClickSound(); startGameAction()" id="lang-btn-play">Oyuna Başla</button>
     </div>
 
     <div id="game-screen" class="card screen">
@@ -281,7 +265,7 @@
 
             <div class="panel">
                 <h3 id="lang-cmd-panel">Komut Paneli</h3>
-                <div class="cmd-buttons">
+                <div class="cmd-buttons" id="command-buttons-box">
                     <button class="btn-cmd" onclick="playClickSound(); addCmd('İleri')" id="btn-forward">⬆️ İleri</button>
                     <button class="btn-cmd" onclick="playClickSound(); addCmd('Sağa Dön')" id="btn-right">↪️ Sağa Dön</button>
                     <button class="btn-cmd" onclick="playClickSound(); addCmd('Sola Dön')" id="btn-left">↩️ Sola Dön</button>
@@ -306,7 +290,7 @@
             <p id="lang-cert-desc1">Bu sertifika gururla sunulur:</p>
             <div class="cert-name" id="cert-user-name">Oyuncu Adı</div>
             <div class="cert-body" id="lang-cert-desc2">
-                Tüm engelleri aşarak, rokete binip uzaya ulaştı ve <b>100 Seviyelik</b> Chick Command bulmacalarının tamamını başarıyla çözdü!
+                Tüm engelleri aşarak, rokete binip uzaya ulaştı ve <b>100 Seviyelik</b> bulmacaların tamamını başarıyla çözdü!
             </div>
             <p style="margin-top: 30px; font-size: 14px; color: #b2bec3;" id="cert-date"></p>
         </div>
@@ -414,7 +398,6 @@
                 welcome: "Lobiye Hoş Geldin!",
                 placeholder: "Kullanıcı adını yaz...",
                 playBtn: "Oyuna Başla",
-                codeBtn: "Kodlamaya Başla",
                 banner: "Lütfen civcivi oradaki komuta göre komutlandırınız! 🐥",
                 lobbyBtn: "🏠 Lobiye Dön",
                 level: "Seviye",
@@ -426,12 +409,13 @@
                 forward: "⬆️ İleri",
                 right: "↪️ Sağa Dön",
                 left: "↩️ Sola Dön",
+                loop: "🔁 Sonsuz Tekrar",
                 cmdChain: "Komut Zinciri:",
                 undo: "⬅️ Geri Al",
                 run: "▶️ Çalıştır",
                 certTitle: "BAŞARI SERTİFİKASI",
                 certDesc1: "Bu sertifika gururla sunulur:",
-                certDesc2: "Tüm engelleri aşarak, rokete binip uzaya ulaştı ve <b>100 Seviyelik</b> Chick Command bulmacalarının tamamını başarıyla çözdü!",
+                certDesc2: "Tüm engelleri aşarak, rokete binip uzaya ulaştı ve <b>100 Seviyelik</b> bulmacaların tamamını başarıyla çözdü!",
                 certDl: "📜 Sertifikayı İndir (PNG)",
                 alertName: "Lütfen bir isim gir!",
                 alertHit: "Eyvah! Engele çarptın, tekrar dene.",
@@ -443,7 +427,6 @@
                 welcome: "Welcome to Lobby!",
                 placeholder: "Enter your username...",
                 playBtn: "Start Game",
-                codeBtn: "Start Coding",
                 banner: "Please command the chick according to the grid! 🐥",
                 lobbyBtn: "🏠 Back to Lobby",
                 level: "Level",
@@ -455,12 +438,13 @@
                 forward: "⬆️ Forward",
                 right: "↪️ Turn Right",
                 left: "↩️ Turn Left",
+                loop: "🔁 Infinite Loop",
                 cmdChain: "Command Chain:",
                 undo: "⬅️ Undo",
                 run: "▶️ Run",
                 certTitle: "CERTIFICATE OF SUCCESS",
                 certDesc1: "This certificate is proudly presented to:",
-                certDesc2: "Overcoming all obstacles, reached space by rocket and successfully solved all <b>100 levels</b> of Chick Command!",
+                certDesc2: "Overcoming all obstacles, reached space by rocket and successfully solved all <b>100 levels</b>!",
                 certDl: "📜 Download Certificate (PNG)",
                 alertName: "Please enter a name!",
                 alertHit: "Oh no! You hit an obstacle, try again.",
@@ -472,7 +456,6 @@
                 welcome: "Willkommen in der Lobby!",
                 placeholder: "Gib deinen Benutzernamen ein...",
                 playBtn: "Spiel Starten",
-                codeBtn: "Programmieren Starten",
                 banner: "Bitte steuere das Küken gemäß den Anweisungen! 🐥",
                 lobbyBtn: "🏠 Zurück zur Lobby",
                 level: "Level",
@@ -484,6 +467,7 @@
                 forward: "⬆️ Vorwärts",
                 right: "↪️ Rechts abbiegen",
                 left: "↩️ Links abbiegen",
+                loop: "🔁 Endlosschleife",
                 cmdChain: "Befehlskette:",
                 undo: "⬅️ Rückgängig",
                 run: "▶️ Ausführen",
@@ -508,13 +492,9 @@
             document.getElementById('lang-welcome').innerText = t.welcome;
             document.getElementById('username').placeholder = t.placeholder;
             document.getElementById('lang-btn-play').innerText = t.playBtn;
-            document.getElementById('lang-btn-code').innerText = t.codeBtn;
             document.getElementById('lang-banner').innerText = t.banner;
             document.getElementById('lang-btn-lobby').innerText = t.lobbyBtn;
             document.getElementById('lang-cmd-panel').innerText = t.cmdPanel;
-            document.getElementById('btn-forward').innerText = t.forward;
-            document.getElementById('btn-right').innerText = t.right;
-            document.getElementById('btn-left').innerText = t.left;
             document.getElementById('lang-cmd-chain').innerText = t.cmdChain;
             document.getElementById('lang-btn-undo').innerText = t.undo;
             document.getElementById('lang-btn-run').innerText = t.run;
@@ -524,8 +504,10 @@
             document.getElementById('lang-cert-dl').innerText = t.certDl;
             document.getElementById('lang-cert-lobby').innerText = t.lobbyBtn;
 
+            updateCommandButtons();
             if(document.getElementById('game-screen').classList.contains('active')) {
                 updateLevelUI();
+                updateCmdUI();
             }
         }
 
@@ -540,7 +522,7 @@
 
         const dirIcons = ['🐤', '🐥', '🐥', '🐤'];
 
-        function startLobbyAction(action) {
+        function startGameAction() {
             const name = document.getElementById('username').value.trim();
             if(!name) return alert(translations[currentLang].alertName);
             player.name = name;
@@ -551,7 +533,6 @@
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('cert-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            document.getElementById('player-tag').innerText = `${translations[currentLang].player}: ${player.name}`;
             loadLevel(currentLevel);
         }
 
@@ -560,6 +541,20 @@
             document.getElementById('cert-screen').classList.remove('active');
             document.getElementById('login-screen').classList.add('active');
             currentLevel = 1;
+        }
+
+        function updateCommandButtons() {
+            const t = translations[currentLang];
+            const box = document.getElementById('command-buttons-box');
+            let html = `
+                <button class="btn-cmd" onclick="playClickSound(); addCmd('İleri')">${t.forward}</button>
+                <button class="btn-cmd" onclick="playClickSound(); addCmd('Sağa Dön')">${t.right}</button>
+                <button class="btn-cmd" onclick="playClickSound(); addCmd('Sola Dön')">${t.left}</button>
+            `;
+            if (currentLevel >= 3) {
+                html += `<button class="btn-cmd" style="background:#e17055; box-shadow:0 4px 0 #d35400;" onclick="playClickSound(); addCmd('Tekrar')">${t.loop}</button>`;
+            }
+            box.innerHTML = html;
         }
 
         function updateLevelUI() {
@@ -574,8 +569,9 @@
         }
 
         function loadLevel(lvl) {
+            currentLevel = lvl;
             commands = [];
-            updateCmdUI();
+            updateCommandButtons();
             updateLevelUI();
 
             gridSize = lvl > 50 ? 6 : (lvl > 20 ? 5 : 4);
@@ -600,11 +596,12 @@
             }
 
             renderBoard();
+            updateCmdUI();
         }
 
         function renderBoard() {
             const grid = document.getElementById('grid');
-            grid.style.gridTemplateColumns = `repeat(${gridSize}, 58px)`;
+            grid.style.gridTemplateColumns = `repeat(${gridSize}, 54px)`;
             grid.innerHTML = '';
 
             for(let r=0; r<gridSize; r++) {
@@ -645,13 +642,22 @@
                 if(c === 'İleri') badge.innerText = t.forward;
                 else if(c === 'Sağa Dön') badge.innerText = t.right;
                 else if(c === 'Sola Dön') badge.innerText = t.left;
+                else if(c === 'Tekrar') badge.innerText = t.loop;
                 list.appendChild(badge);
             });
         }
 
         async function runCode() {
             const t = translations[currentLang];
-            for(let cmd of commands) {
+            let activeCommands = [...commands];
+            
+            // Eğer tekrar döngüsü varsa komutları genişlet
+            if(activeCommands.includes('Tekrar')) {
+                let baseCmds = activeCommands.filter(c => c !== 'Tekrar');
+                activeCommands = [...baseCmds, ...baseCmds];
+            }
+
+            for(let cmd of activeCommands) {
                 if(cmd === 'İleri') {
                     if(chick.dir === 0 && chick.x < gridSize-1) chick.x++;
                     else if(chick.dir === 1 && chick.y < gridSize-1) chick.y++;
@@ -680,8 +686,7 @@
                     showCertificate();
                 } else {
                     alert(t.alertWin);
-                    currentLevel++;
-                    loadLevel(currentLevel);
+                    loadLevel(currentLevel + 1);
                 }
             } else {
                 playLoseSound();
