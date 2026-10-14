@@ -80,7 +80,6 @@
         .btn-orange { background: #e17055; box-shadow: 0 5px 0 #d35400; }
         .btn-purple { background: #a29bfe; box-shadow: 0 5px 0 #6c5ce7; }
         .btn-lobby { background: #fdcb6e; box-shadow: 0 5px 0 #e1b12c; font-size: 14px; padding: 8px 14px; margin: 0; width: auto; }
-        .btn-lang { background: #0984e3; box-shadow: 0 5px 0 #074b83; margin-top: 5px; }
 
         .lang-container {
             display: flex;
@@ -582,15 +581,28 @@
             else if(lvl < 70) boardBox.className = "board-container theme-desert";
             else boardBox.className = "board-container theme-space";
 
-            chick = { x: 0, y: 0, dir: 0 };
-            target = { x: gridSize - 1, y: gridSize - 1 };
-            
+            // Rastgele başlangıç ve hedef konumları üret (birbirinden farklı olacak şekilde)
+            do {
+                chick.x = Math.floor(Math.random() * gridSize);
+                chick.y = Math.floor(Math.random() * gridSize);
+                target.x = Math.floor(Math.random() * gridSize);
+                target.y = Math.floor(Math.random() * gridSize);
+            } while (chick.x === target.x && chick.y === target.y);
+
+            chick.dir = Math.floor(Math.random() * 4);
+
+            // Engelleri rastgele dağıt
             obstacles = [];
-            let obsCount = Math.min(Math.floor(lvl / 8), gridSize);
-            for(let i=0; i<obsCount; i++) {
-                let ox = Math.floor(Math.random() * (gridSize - 1));
+            let obsCount = Math.min(Math.floor(lvl / 8) + 1, Math.floor((gridSize * gridSize) / 3));
+            while(obstacles.length < obsCount) {
+                let ox = Math.floor(Math.random() * gridSize);
                 let oy = Math.floor(Math.random() * gridSize);
-                if((ox!==0||oy!==0) && (ox!==target.x||oy!==target.y)) {
+                
+                let isChick = (ox === chick.x && oy === chick.y);
+                let isTarget = (ox === target.x && oy === target.y);
+                let exists = obstacles.some(o => o.x === ox && o.y === oy);
+
+                if(!isChick && !isTarget && !exists) {
                     obstacles.push({x: ox, y: oy});
                 }
             }
@@ -651,7 +663,6 @@
             const t = translations[currentLang];
             let activeCommands = [...commands];
             
-            // Eğer tekrar döngüsü varsa komutları genişlet
             if(activeCommands.includes('Tekrar')) {
                 let baseCmds = activeCommands.filter(c => c !== 'Tekrar');
                 activeCommands = [...baseCmds, ...baseCmds];
@@ -659,10 +670,10 @@
 
             for(let cmd of activeCommands) {
                 if(cmd === 'İleri') {
-                    if(chick.dir === 0 && chick.x < gridSize-1) chick.x++;
-                    else if(chick.dir === 1 && chick.y < gridSize-1) chick.y++;
-                    else if(chick.dir === 2 && chick.x > 0) chick.x--;
-                    else if(chick.dir === 3 && chick.y > 0) chick.y--;
+                    if(chick.dir === 0 && chick.y > 0) chick.y--;
+                    else if(chick.dir === 1 && chick.x < gridSize-1) chick.x++;
+                    else if(chick.dir === 2 && chick.y < gridSize-1) chick.y++;
+                    else if(chick.dir === 3 && chick.x > 0) chick.x--;
                 } else if(cmd === 'Sağa Dön') {
                     chick.dir = (chick.dir + 1) % 4;
                 } else if(cmd === 'Sola Dön') {
