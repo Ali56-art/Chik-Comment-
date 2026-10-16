@@ -29,7 +29,7 @@
         <div class="header">
             <div>
                 <span>🐤 Civciv Komutu</span>
-                <h2 id="txtTitle">Lobiye Hoş Geldin!</h2>
+                <h2>Lobiye Hoş Geldin!</h2>
             </div>
         </div>
 
@@ -63,7 +63,7 @@
             </div>
 
             <div class="game-area">
-                <div class="canvas-box" id="canvasBox">🐥 ➡️ 🌾</div>
+                <div class="canvas-box">🐥 ➡️ 🌾</div>
                 
                 <div>
                     <h3>Komut Paneli</h3>
@@ -88,7 +88,6 @@
             updateUI();
             setInterval(updateLobby, 1000);
 
-            // Buton Dinleyicileri
             document.getElementById('teacherBtn').addEventListener('click', handleTeacher);
             document.getElementById('creativeBtn').addEventListener('click', handleCreative);
             document.getElementById('studentBtn').addEventListener('click', handleStudent);
@@ -222,19 +221,19 @@
         }
 
         function handleStartRace() {
-            localStorage.setItem('isRaceActive', 'true');
+            localStorage.setItem('isRaceActive', 'v');
             alert("Yarışma başladı!");
             document.getElementById('lblLevel').innerText = "Seviye: 1 / 10 (YARIŞMA)";
         }
 
         function handleRun() {
-            const isRace = localStorage.getItem('isRaceActive') === 'true';
+            const isRace = localStorage.getItem('isRaceActive') === 'v';
             let lvl = parseInt(localStorage.getItem('currentLvl') || '1') + 1;
             const limit = isRace ? 10 : 100;
 
             if (lvl > limit) {
                 if (isRace) {
-                    alert("🥇 10. seviyeyi bitirdin ve 1. oldun!");
+                    alert("🥇 10. seviyeyi bitirdin ve 1. oldون!");
                     lvl = 10;
                 } else {
                     alert("🏆 Tebrikler, 100. seviyeyi tamamlayıp Sertifika Kazandın!");
