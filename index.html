@@ -401,13 +401,6 @@
     </div>
 
     <script>
-        // Şifreler arka planda güvenli kodlama ile saklanır (Kod aratıldığında görünmez)
-        function checkPass(input, target) {
-            return btoa(input) === target;
-        }
-        const T_KEY = "dGVhY2hlcsKnQA==";
-        const C_KEY = "Y3JlYXRpdmVPTzEwMjkzODQ3NTY=";
-
         let currentLang = 'TR';
         let commands = [];
         let currentLevel = 1;
@@ -417,7 +410,6 @@
             updateUI();
             setInterval(updateLobbyList, 1000);
 
-            // Buton Olayları
             document.getElementById('btnForward').addEventListener('click', () => addCommand('FORWARD'));
             document.getElementById('btnRight').addEventListener('click', () => addCommand('RIGHT'));
             document.getElementById('btnLeft').addEventListener('click', () => addCommand('LEFT'));
@@ -559,28 +551,24 @@
         // Öğretmen Girişi
         document.getElementById('teacherAccountBtn').addEventListener('click', function() {
             const password = prompt("Lütfen Öğretmen şifresini girin:");
-            if (password) {
-                if (checkPass(password, T_KEY)) {
-                    alert("Giriş başarılı! Öğretmen hesabı aktif edildi.");
-                    localStorage.setItem('userRole', 'teacher');
-                    location.reload();
-                } else {
-                    alert("Hatalı şifre!");
-                }
+            if (password === "teacher§@") {
+                alert("Giriş başarılı! Öğretmen hesabı aktif edildi.");
+                localStorage.setItem('userRole', 'teacher');
+                location.reload();
+            } else if (password !== null) {
+                alert("Hatalı şifre!");
             }
         });
 
         // Creative Girişi
         document.getElementById('creativeAccountBtn').addEventListener('click', function() {
             const password = prompt("Lütfen Creative Hesabı şifresini girin:");
-            if (password) {
-                if (checkPass(password, C_KEY)) {
-                    alert("Giriş başarılı! Creative Hesabı aktif edildi.");
-                    localStorage.setItem('userRole', 'creative');
-                    location.reload();
-                } else {
-                    alert("Hatalı şifre!");
-                }
+            if (password === "creativeOO1029384756") {
+                alert("Giriş başarılı! Creative Hesabı aktif edildi.");
+                localStorage.setItem('userRole', 'creative');
+                location.reload();
+            } else if (password !== null) {
+                alert("Hatalı şifre!");
             }
         });
 
